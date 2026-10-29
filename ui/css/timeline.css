@@ -1,0 +1,124 @@
+/* 타임라인 (ui/js/timeline.js) — 캡컷 데스크톱 타임라인 느낌 */
+.tl{display:flex;flex-direction:column;flex:1;min-height:0;--tl-head:76px}
+
+/* 도구 막대 */
+.tl-bar{display:flex;align-items:center;gap:2px;height:40px;flex:none;padding:0 8px;border-bottom:1px solid var(--line)}
+.tl-bar .btn.sm{color:var(--text-2)}
+.tl-bar .btn.sm:not(.icon){padding:0 9px 0 7px;gap:5px}
+.tl-bar .btn.sm:hover{color:var(--text)}
+.tl-bar .btn[aria-pressed=true]{color:var(--accent)}
+.tl-bar .vsep{height:18px;margin:0 5px}
+.tl-axis{display:flex;align-items:center;gap:8px;height:28px;padding:0 4px 0 6px;font-size:12px;color:var(--text-2);cursor:pointer;white-space:nowrap}
+.tl-axis:hover{color:var(--text)}
+.tl-zoom{width:96px;margin:0 2px}
+
+/* 틀: 왼쪽 줄 머리 + 오른쪽 (눈금자 / 트랙) */
+.tl-body{position:relative;flex:1;min-height:0;display:grid;grid-template-columns:var(--tl-head) minmax(0,1fr);grid-template-rows:24px minmax(0,1fr)}
+.tl-corner{display:flex;align-items:center;padding-left:12px;font:500 11px var(--font);color:var(--text-2);letter-spacing:.01em;
+ border-right:1px solid var(--line);box-shadow:inset 0 -1px 0 var(--line)}
+.tl-ruler{position:relative;overflow:clip;cursor:default}
+.tl-ruler::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--line);pointer-events:none}
+.tl-cv{position:absolute;left:0;top:0;pointer-events:none}
+.tl-layer{position:absolute;left:0;top:0;width:0;height:100%;will-change:transform}
+.tl-scroll{grid-column:1/-1;grid-row:2;min-height:0;display:grid;grid-template-columns:var(--tl-head) minmax(0,1fr);align-items:start;overflow-x:hidden;overflow-y:auto}
+.tl-heads{padding:6px 0 8px;border-right:1px solid var(--line);min-height:100%}
+.tl-head{display:flex;align-items:center;gap:7px;padding-left:12px;margin-bottom:6px;color:var(--text-2);font-size:12px;overflow:hidden}
+.tl-head:last-child{margin-bottom:0}
+.tl-head>.i{color:var(--text-2)}
+.tl-view{position:relative;overflow:clip;padding:6px 0 8px;min-height:100%}
+.tl-track{position:relative;margin-bottom:6px}
+.tl-track.tl-audio{margin-bottom:0}
+.tl-subs{z-index:3}
+.tl-subs::before{content:"";position:absolute;inset:0;border-radius:6px;background:rgba(255,255,255,.018)}
+.tl-mediabox{position:absolute;left:0;right:0;z-index:1}
+
+/* 자막 클립 (캡컷 글자 클립: 녹슨 주황, 화자 색 막대) */
+.tl-sub{position:absolute;left:0;top:0;height:calc(var(--lane-h,28px) - 4px);display:flex;align-items:center;border-radius:5px;background:var(--subclip);
+ box-shadow:inset 0 0 0 1px rgba(255,255,255,.07);overflow:hidden;contain:strict;cursor:default;transition:background var(--fast)}
+.tl-sub::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--sp,#A1A1AA)}
+.tl-sub.thin::before{display:none}
+.tl-sub .t{flex:1;min-width:0;padding:0 8px 0 9px;font:500 12px/1 var(--font);color:#FFF1EA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.tl-sub:hover{background:#9C5536}
+.tl-sub.sel{background:#A65B3B;box-shadow:inset 0 0 0 1.5px #fff}
+.tl-sub.drag{cursor:grabbing;box-shadow:inset 0 0 0 1.5px #fff,0 4px 14px rgba(0,0,0,.45)}
+.tl-sub.hid{opacity:.4;background:repeating-linear-gradient(-45deg,#6E3B26 0 4px,#5A3020 4px 8px)}
+.tl-sub.chk .t{padding-right:16px}
+.tl-sub.chk::after{content:"";position:absolute;right:6px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:var(--warn)}
+.tl-sub.lock .t::before{content:"";display:inline-block;width:9px;height:9px;margin:0 4px -1px 0;background:currentColor;opacity:.65;
+ -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10V7a5 5 0 0 1 10 0v3h1a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2zm2 0h6V7a3 3 0 0 0-6 0z'/%3E%3C/svg%3E") center/contain no-repeat;
+ mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10V7a5 5 0 0 1 10 0v3h1a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2zm2 0h6V7a3 3 0 0 0-6 0z'/%3E%3C/svg%3E") center/contain no-repeat}
+
+/* 끝 잡기 (자막 · 컷) */
+.tl-sub .h,.tl-cut .h{position:absolute;top:0;bottom:0;width:7px;z-index:1;cursor:ew-resize}
+.tl-sub .h.l,.tl-cut .h.l{left:0}
+.tl-sub .h.r,.tl-cut .h.r{right:0}
+.tl-sub.thin .h,.tl-cut.thin .h{display:none}
+.tl-sub.sel .h::after,.tl-cut.sel .h::after{content:"";position:absolute;top:50%;width:3px;height:12px;margin-top:-6px;border-radius:2px;background:#fff}
+.tl-sub.sel .h.l::after{left:3px}
+.tl-sub.sel .h.r::after,.tl-cut.sel .h.r::after{right:2px}
+.tl-cut.sel .h.l::after{left:2px}
+
+/* 잘린 구간 (원본 축): 켜짐 = 빨간 빗금, 끔(제안) = 종류 색 점선 */
+.tl-cut{position:absolute;left:0;top:0;height:100%;border-radius:4px}
+.tl-cut.on{z-index:3;background:repeating-linear-gradient(-45deg,rgba(242,85,90,.55) 0 4px,rgba(242,85,90,.12) 4px 8px),rgba(12,12,14,.55);
+ box-shadow:inset 1px 0 0 rgba(242,85,90,.95),inset -1px 0 0 rgba(242,85,90,.95)}
+.tl-cut.on::after{content:"";position:absolute;left:0;right:0;top:0;height:2px;border-radius:4px 4px 0 0;background:var(--tc,var(--cut))}
+.tl-cut.on:hover{background:repeating-linear-gradient(-45deg,rgba(242,85,90,.68) 0 4px,rgba(242,85,90,.2) 4px 8px),rgba(12,12,14,.5)}
+.tl-cut.off{z-index:2;border:1px dashed var(--tc,var(--text-3));background:color-mix(in srgb,var(--tc,#fff) 9%,transparent)}
+.tl-cut.off:hover{background:color-mix(in srgb,var(--tc,#fff) 16%,transparent)}
+.tl-cut.unrev::before{content:"";position:absolute;left:50%;top:6px;width:7px;height:7px;margin-left:-3.5px;border-radius:50%;background:var(--accent);
+ box-shadow:0 0 0 2px rgba(6,18,23,.85);z-index:2;pointer-events:none}
+.tl-cut.thin.unrev::before{left:0;top:0;width:100%;height:3px;margin:0;border-radius:0;box-shadow:none}
+.tl-cut.sel{z-index:4;box-shadow:inset 0 0 0 1.5px #fff}
+.tl-cut.off.sel{border-color:transparent}
+
+/* 편집본 축: 잘린 자리 표시 (틈) · 조각 선택 · 다듬기 미리보기 */
+.tl-seam{position:absolute;left:-7px;top:-4px;width:14px;height:22px;z-index:5;cursor:pointer}
+.tl-seam>i{position:absolute;left:5px;top:3px;width:4px;height:15px;border-radius:2px;background:var(--cut);box-shadow:0 0 0 1.5px rgba(14,14,16,.92);transition:transform var(--fast),background var(--fast)}
+.tl-seam:hover>i{background:#FF8A8E;transform:scaleY(1.15)}
+.tl-seam.sel>i{background:#fff}
+.tl-seam.unrev::after{content:"";position:absolute;left:4px;top:-5px;width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 1.5px rgba(6,18,23,.9)}
+.tl-pbox{position:absolute;left:0;top:0;height:100%;border-radius:5px;pointer-events:none;z-index:4}
+.tl-pbox.sel{box-shadow:inset 0 0 0 2px #fff}
+.tl-pbox.hov{box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)}
+.tl-pbox .h{display:none;position:absolute;top:0;bottom:0;width:7px;background:#fff}
+.tl-pbox.ed:not(.thin) .h{display:block}
+.tl-pbox.hov .h{opacity:.55}
+.tl-pbox .h.l{left:0;border-radius:5px 0 0 5px}
+.tl-pbox .h.r{right:0;border-radius:0 5px 5px 0}
+.tl-pbox .h::after{content:"";position:absolute;top:50%;left:2.5px;width:2px;height:14px;margin-top:-7px;border-radius:1px;background:rgba(6,18,23,.55)}
+.tl-ghost{position:absolute;left:0;top:0;height:100%;border-radius:4px;z-index:6;pointer-events:none;display:flex;justify-content:center;align-items:flex-start}
+.tl-ghost.cut{background:repeating-linear-gradient(-45deg,rgba(242,85,90,.6) 0 4px,rgba(242,85,90,.22) 4px 8px);box-shadow:inset 0 0 0 1.5px var(--cut)}
+.tl-ghost.add{background:rgba(1,224,248,.16);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.tl-ghost>span{margin-top:5px;padding:2px 6px;border-radius:5px;background:rgba(8,10,12,.85);color:#fff;font:600 11px var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* 메모 핀 (눈금자) */
+.tl-pin{position:absolute;left:-7px;top:2px;width:14px;height:18px;z-index:2;cursor:pointer}
+.tl-pin>i{position:absolute;left:2px;top:1px;width:10px;height:10px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--accent);
+ box-shadow:0 0 0 1.5px rgba(14,14,16,.9);transition:transform var(--fast)}
+.tl-pin:hover>i{transform:rotate(-45deg) scale(1.2)}
+.tl-pin.done>i{background:#6B6B75}
+.tl-pin.sel>i{background:#fff}
+
+/* 재생 헤드 · 스냅 선 · 끌기 표시 */
+.tl-over{position:absolute;left:var(--tl-head);right:0;top:0;bottom:0;z-index:6;pointer-events:none;overflow:clip}
+.tl-ph{position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--accent);will-change:transform}
+.tl-knob{position:absolute;top:0;left:-6px;width:13px;height:15px;background:var(--accent);pointer-events:auto;cursor:ew-resize;
+ clip-path:polygon(15% 0,85% 0,100% 12%,100% 58%,50% 100%,0 58%,0 12%)}
+.tl-guide{position:absolute;left:0;top:0;bottom:0;width:1px;will-change:transform;background:repeating-linear-gradient(to bottom,#FFE27A 0 5px,transparent 5px 8px)}
+.tl-guide.q{opacity:.5}
+.tl-badge{position:absolute;left:0;top:27px;translate:-50% 0;padding:2px 7px;border-radius:5px;background:rgba(10,10,12,.88);color:#fff;
+ font:600 11px/16px var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:none;will-change:transform;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+
+/* 자막 바로 고치기 */
+.tl-edit{position:absolute;left:0;top:0;z-index:20;display:block;min-height:calc(var(--lane-h,28px) - 2px);max-height:84px;padding:5px 9px;margin:0;
+ border:1.5px solid var(--accent);border-radius:6px;background:#2A1A13;color:#fff;font:500 12px/1.35 var(--font);resize:none;outline:none;overflow:hidden;
+ box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.tl-edit::placeholder{color:rgba(255,255,255,.4)}
+
+/* 메모 팝오버 */
+.tl-memo{display:flex;flex-direction:column;gap:8px;width:260px}
+.tl-memo-in{min-height:56px}
+.tl-memo-foot{display:flex;align-items:center;justify-content:space-between;color:var(--text-2);font-size:12px}
+
+.tl-empty{position:absolute;left:0;right:0;top:24px;bottom:0;z-index:7;background:var(--panel)}

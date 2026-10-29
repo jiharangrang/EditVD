@@ -1,0 +1,4 @@
+mlx-whisper==0.4.3
+numpy
+pillow
+# 시끄러운 곳 목소리 분리(--clean)를 쓸 때만: pip install demucs==4.1.0 soundfile

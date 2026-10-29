@@ -1,0 +1,80 @@
+/* 미리보기 (player.js) */
+.pl{background:var(--panel)}
+.pl.fs{background:#000;border-radius:0}
+.pl-view{position:relative;flex:1;min-height:0;display:grid;place-items:center;padding:14px 14px 2px;overflow:hidden}
+.pl.fs .pl-view{padding:0}
+.pl-stage{position:relative;width:0;height:0;background:#000;overflow:hidden;contain:strict;--fs:20px;border-radius:2px}
+.pl-video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;pointer-events:none;background:#000}
+.pl-video.on{opacity:1;z-index:1}
+
+/* 자막 (렌더와 같은 모양: 흰 굵은 글씨 · 검은 테두리 · 화면 높이 5.2% · 폭 88%) */
+.pl-subs{position:absolute;inset:0;z-index:2;pointer-events:none}
+.pl-sub{position:absolute;width:max-content;max-width:88%;transform:translate(-50%,-50%);padding:.04em .18em;border-radius:3px;
+ font:700 var(--fs)/1.3 "Apple SD Gothic Neo",var(--font);color:#fff;text-align:center;white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere;
+ -webkit-text-stroke:calc(var(--fs) * .14) #000;paint-order:stroke fill;letter-spacing:-.01em;
+ pointer-events:auto;cursor:move;outline:1px solid transparent;outline-offset:1px;transition:outline-color var(--fast),opacity var(--fast)}
+.pl-sub:hover{outline-color:rgba(255,255,255,.55)}
+.pl-sub.sel{outline:1.5px solid var(--accent)}
+.pl-sub.editing{cursor:text;outline:1.5px dashed var(--accent);background:rgba(0,0,0,.28);-webkit-user-select:text;user-select:text;caret-color:var(--accent)}
+.pl-stage.dragging .pl-sub.sel{outline-style:dashed}
+.pl-stage.dragging,.pl-stage.dragging *{cursor:move}
+
+/* 끌 때 맞춤선 · 안전 영역 */
+.pl-guide{position:absolute;z-index:3;pointer-events:none;background:var(--accent);opacity:0;box-shadow:0 0 0 .5px rgba(0,0,0,.4)}
+.pl-guide.v{top:0;bottom:0;left:50%;width:1px}
+.pl-guide.h{left:0;right:0;height:1px}
+.pl-guide.on{opacity:.95}
+.pl-safe{position:absolute;inset:5%;z-index:3;border:1px dashed rgba(255,255,255,.32);border-radius:3px;pointer-events:none;opacity:0;transition:opacity var(--fast)}
+.pl-stage.dragging .pl-safe{opacity:1}
+
+/* '화자 전체' 칩 */
+.pl-chip{position:absolute;z-index:6;transform:translateX(-50%);display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 11px;border-radius:13px;
+ border:1px solid var(--line-2);background:rgba(23,23,26,.94);color:var(--text);font:500 12px var(--font);white-space:nowrap;box-shadow:var(--shadow);
+ animation:pop-in 120ms var(--ease)}
+.pl-chip:hover{background:#2A2A30;border-color:#4A4A54}
+.pl-chip>.dot{--dot:var(--accent)}
+
+/* 잘린 곳 (멈춰 있거나 전부 재생 중) */
+.pl-stage::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;box-shadow:inset 0 0 0 2px transparent;transition:box-shadow var(--fast)}
+.pl-stage.in-cut::after,.pl-stage.pv-in::after{box-shadow:inset 0 0 0 2px var(--cut)}
+.pl-stage.pv-in.pv-keep::after{box-shadow:inset 0 0 0 2px rgba(255,255,255,.55)}
+.pl-stage.in-cut .pl-sub,.pl-stage.pv-in:not(.pv-keep) .pl-sub{opacity:.45}
+
+/* 듣기: 아래쪽 구간 막대 + 잘린 부분 표시 */
+.pl-pv{position:absolute;left:3%;right:3%;bottom:2.6%;z-index:5;height:4px;border-radius:2px;background:rgba(255,255,255,.24);
+ box-shadow:0 0 0 1px rgba(0,0,0,.35);pointer-events:none;opacity:0;transition:opacity var(--fast)}
+.pl-pv.on{opacity:1}
+.pl-pv>.cut{position:absolute;top:-1px;bottom:-1px;border-radius:2px;background:var(--cut)}
+.pl-pv>.cut.keep{background:rgba(255,255,255,.7)}
+.pl-pv>.head{position:absolute;top:-4px;bottom:-4px;width:2px;margin-left:-1px;border-radius:1px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.45)}
+.pl-pv-pill{position:absolute;left:12px;top:12px;z-index:5;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.pl-pv-pill.cut{background:rgba(242,85,90,.92);color:#fff}
+.pl-pv-pill.keep{background:rgba(46,46,52,.94);color:var(--text)}
+
+/* 미리보기 파일이 아직 없을 때 */
+.pl-ph{position:absolute;inset:0;z-index:7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+ background:#0B0B0D;color:var(--text-3);font-size:12px}
+.pl-ph-ico{display:grid;place-items:center;min-height:26px}
+.pl-ph-row{display:flex;align-items:baseline;gap:6px}
+.pl-ph .t{color:var(--text-2)}
+
+/* 조작 줄 */
+.pl-bar{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px;height:46px;padding:0 8px 2px 16px;flex:none;container-type:inline-size}
+.pl-tc{display:flex;align-items:baseline;gap:5px;min-width:0;white-space:nowrap;overflow:hidden}
+.pl-tc-cur{font:600 13px var(--mono);font-variant-numeric:tabular-nums;color:var(--accent);letter-spacing:-.01em}
+.pl-tc-sep{color:var(--text-3);font-size:12px}
+.pl-tc-total{font:13px var(--mono);font-variant-numeric:tabular-nums;color:var(--text-2);letter-spacing:-.01em}
+.pl-orig{height:20px;margin-left:6px;padding:0 6px;border:0;border-radius:5px;background:transparent;color:var(--text-2);
+ font:11px var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;transition:background var(--fast),color var(--fast)}
+.pl-orig:hover{background:var(--hover);color:var(--text)}
+.pl-all{align-self:center;height:18px;margin-left:8px;padding:0 7px;border-radius:9px}
+.pl-mid{display:flex;align-items:center;gap:2px}
+.pl-mid .btn.icon{color:var(--text-2)}
+.pl-mid .btn.icon:hover{color:var(--text)}
+.pl-mid .pl-play{width:36px;height:36px;border-radius:18px;color:var(--text)}
+.pl-right{display:flex;align-items:center;justify-content:flex-end;gap:2px}
+.pl-vol{display:flex;align-items:center}
+.pl-vol .range{width:0;opacity:0;margin:0;transition:width 150ms var(--ease),opacity 150ms var(--ease),margin 150ms var(--ease)}
+.pl-vol:hover .range,.pl-vol:focus-within .range{width:72px;opacity:1;margin:0 6px 0 2px}
+.pl.fs .pl-bar{background:#000}
+@container (max-width:620px){.pl-tc-sep,.pl-tc-total{display:none}.pl-orig{margin-left:2px}}

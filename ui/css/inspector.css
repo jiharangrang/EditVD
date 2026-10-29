@@ -1,0 +1,76 @@
+/* 속성 (inspector.js) */
+.insp-head{gap:8px;padding-right:10px}
+.insp-head>.title{gap:8px}
+.insp-ico{display:grid;place-items:center;width:24px;height:24px;border-radius:7px;background:var(--panel-2);color:var(--text-2)}
+.insp-extra{display:flex;align-items:center;gap:6px}
+.insp-unrev{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2)}
+.insp-unrev>.dot{width:6px;height:6px}
+.insp-check{height:22px;gap:6px}
+.insp-lock{display:grid;place-items:center;width:22px;height:22px;color:var(--text-3)}
+.insp-body{padding:2px 14px 18px}
+.insp-stack{display:flex;flex-direction:column;gap:14px}
+
+/* 묶음 */
+.insp-sec{display:flex;flex-direction:column;gap:8px}
+.insp-label{display:flex;align-items:baseline;gap:6px;color:var(--text-3);font:600 11px/1 var(--font);letter-spacing:.02em}
+.insp-label>span{display:inline-flex;align-items:baseline;gap:6px}
+.insp-label em{margin-left:2px;padding:2px 5px;border-radius:4px;background:var(--panel-2);color:var(--text-2);font-style:normal;font-weight:500;font-size:11px}
+.insp .field{grid-template-columns:40px minmax(0,1fr);min-height:30px}
+.insp .stepper{height:30px}
+.insp .stepper.sm input{font-size:12px}
+.insp .stepper.bad{border-color:var(--cut);animation:insp-shake 300ms}
+@keyframes insp-shake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.insp-pos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.insp-pos .field{grid-template-columns:14px minmax(0,1fr);gap:6px}
+.insp-row{display:flex;gap:6px}
+.insp-row>.btn{flex:1;padding:0 8px}
+
+/* 값 줄 */
+.insp-kvs{display:flex;flex-direction:column;gap:2px}
+.insp-kv{display:flex;align-items:center;gap:8px;min-height:26px;font-size:12px}
+.insp-kv>.k{width:56px;flex:none;color:var(--text-2)}
+.insp-kv>.v{color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.insp-kv.tcv>.v,.insp-kv>.v.tc{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.insp-kv.accent>.v{color:var(--accent)}
+.insp-kv>.sp{flex:1}
+.insp .facts .insp-kv{min-height:30px;border-bottom:1px solid rgba(255,255,255,.04)}
+.insp .facts .insp-kv>.k{width:64px}
+
+/* 컷 */
+.insp-seg>button{height:30px;font-size:13px}
+.insp-type{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 8px;border-radius:11px;background:var(--panel-2);color:var(--text-2);font:500 11px var(--font)}
+.insp-type>i{width:3px;height:12px;border-radius:2px;background:var(--tc,var(--c-silence))}
+.insp-listen.on{background:var(--accent-soft);color:var(--accent)}
+.insp-note{display:flex;gap:8px;padding:10px 12px;border-radius:var(--r);background:var(--panel-2);color:var(--text);font-size:12px;line-height:1.5}
+.insp-note>.i{flex:none;margin-top:2px;color:var(--accent)}
+.insp-note.reply>.i{color:var(--text-3)}
+.insp-note>span{min-width:0;overflow-wrap:anywhere}
+.insp-note b{font-weight:600;color:var(--text-2)}
+.insp-words{color:var(--text-2);font-size:12px;line-height:1.55;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+
+/* 자막 */
+.insp-text{min-height:58px;max-height:220px;font-size:14px;line-height:1.5;overflow:auto}
+.insp-auto{min-height:30px;font-size:12px;color:var(--text-2)}
+.insp-auto>span{display:inline-flex;align-items:center;gap:6px}
+.insp-speakers{gap:6px}
+.insp-speakers .chip{height:26px;padding:0 10px}
+.insp-speakers .chip[aria-pressed=true]{background:color-mix(in srgb,var(--dot) 18%,transparent);border-color:var(--dot);color:var(--text)}
+.insp-stack.hidden-sub>.insp-text{opacity:.6}
+
+/* 클립 */
+.insp-thumb-box{border-radius:var(--r);overflow:hidden;background:#0A0A0C;aspect-ratio:16/9}
+.insp-thumb{display:block;width:100%;height:100%}
+.insp-name{font:600 13px var(--font);color:var(--text)}
+
+/* 메모 */
+.insp-at{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border:0;border-radius:13px;
+ background:var(--panel-2);color:var(--text);font:12px var(--mono);font-variant-numeric:tabular-nums}
+.insp-at:hover{background:var(--hover)}
+.insp-at>.i{color:var(--accent)}
+.insp-at>em{font-style:normal;font-size:11px;color:var(--text-2)}
+
+/* 화자 */
+.insp-swatches{display:flex;gap:8px}
+.insp-swatch{width:22px;height:22px;padding:0;border:0;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.25);transition:transform var(--fast)}
+.insp-swatch:hover{transform:scale(1.1)}
+.insp-swatch[aria-pressed=true]{box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--c)}

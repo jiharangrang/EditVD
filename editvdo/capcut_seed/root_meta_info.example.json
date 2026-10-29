@@ -1,0 +1,50 @@
+{
+ "root_entry_example": {
+  "cloud_draft_cover": false,
+  "cloud_draft_sync": false,
+  "draft_cloud_last_action_download": false,
+  "draft_cloud_purchase_info": "",
+  "draft_cloud_template_id": "",
+  "draft_cloud_tutorial_info": "",
+  "draft_cloud_videocut_purchase_info": "",
+  "draft_cover": "/Users/harang/Movies/CapCut/User Data/Projects/com.lveditor.draft/1029 (1)/draft_cover.jpg",
+  "draft_fold_path": "/Users/harang/Movies/CapCut/User Data/Projects/com.lveditor.draft/1029 (1)",
+  "draft_id": "32E230DB-B32A-4FA1-BF88-4801EDB3CE2D",
+  "draft_is_ai_shorts": false,
+  "draft_is_cloud_temp_draft": false,
+  "draft_is_infinite_canvas_draft": false,
+  "draft_is_invisible": false,
+  "draft_is_pippit_draft": false,
+  "draft_is_web_article_video": false,
+  "draft_json_file": "/Users/harang/Movies/CapCut/User Data/Projects/com.lveditor.draft/1029 (1)/draft_info.json",
+  "draft_name": "1029 (1)",
+  "draft_new_version": "",
+  "draft_root_path": "/Users/harang/Movies/CapCut/User Data/Projects/com.lveditor.draft",
+  "draft_timeline_materials_size": 4224,
+  "draft_type": "",
+  "draft_web_article_video_enter_from": "",
+  "pippit_avatar_url": "",
+  "pippit_extra_info": "",
+  "pippit_id": "",
+  "pippit_user_name": "",
+  "streaming_edit_draft_ready": true,
+  "tm_draft_cloud_completed": "",
+  "tm_draft_cloud_entry_id": -1,
+  "tm_draft_cloud_modified": 0,
+  "tm_draft_cloud_parent_entry_id": -1,
+  "tm_draft_cloud_space_id": -1,
+  "tm_draft_cloud_user_id": -1,
+  "tm_draft_create": 1793236897856107,
+  "tm_draft_modified": 1793236980028444,
+  "tm_draft_removed": 0,
+  "tm_duration": 34033333
+ },
+ "root_keys": [
+  "draft_ids",
+  "root_path"
+ ],
+ "root_other": {
+  "draft_ids": 2,
+  "root_path": "/Users/harang/Movies/CapCut/User Data/Projects/com.lveditor.draft"
+ }
+}

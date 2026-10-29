@@ -1,0 +1,21 @@
+# 편집 자료 (영상·프로젝트·결과물)
+projects/
+exports/
+backups/
+outputs/
+samples/
+*.mp4
+*.mov
+*.MP4
+*.MOV
+*.wav
+
+# 환경·캐시
+.venv/
+.align-venv/
+.cache/
+__pycache__/
+*.pyc
+.DS_Store
+.claude/settings.local.json
+requirements-align.txt
